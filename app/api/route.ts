@@ -1,11 +1,23 @@
-import { NextResponse } from "next/server"
+import prisma from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server"
 
-export function GET() {
-    console.log("Get request recived")
-}
-export async function POST(req) {
+
+export async function POST(req: NextRequest) {
     const body = await req.json()
-    console.log(body)
-    console.log("Post request recived")
-    return NextResponse.json({ message: `Hello ${body.designation}${body.student}. Welcome to the Sri Lankan No.1 ${body.subject} class. So we hope you study well! Congradulations to your future` })
+
+    await prisma.student.create({
+        data: {
+            name: body.name,
+            age: body.age,
+            city: body.city
+        }
+    })
+
+    return NextResponse.json({message:"Student created successfully!"})
+}
+
+
+export async function GET(req : NextRequest) {
+    const students = await prisma.student.findMany()
+    return NextResponse.json(students)
 }
